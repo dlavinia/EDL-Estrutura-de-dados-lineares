@@ -130,6 +130,12 @@ public class ListaDuplamenteLigada {
         return r;
     }
 
+    public No getInicio(){
+        return this.inicio;
+    }
+    public No getFim(){
+        return this.fim;
+    }
     public void mostrar() {
         No aux = this.inicio;
 
