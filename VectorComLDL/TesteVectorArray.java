@@ -23,10 +23,5 @@ public class TesteVectorArray {
         System.out.println("Removendo elemento do indice 2...");
 
         v.mostrar();
-
-
-
-        
-
     }
 }

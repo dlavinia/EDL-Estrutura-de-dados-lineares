@@ -42,7 +42,7 @@ public class Vector {
     
     public void replaceAtRank(int r, Object o) throws IndexInvalido {
         if (!(r > 0 && r < this.tamanho)) 
-            throw new IndexInvalido("Indice inválido.");
+            throw new IndexInvalido("Index inválido.");
         
         this.ldl.atRank(r).setElemento(o);
     }
