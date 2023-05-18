@@ -120,7 +120,7 @@ public class ListaDuplamenteLigada {
         return novoNo;
     }
 
-    public Object rankOf(No no){
+    public int rankOf(No no){
         No n = this.inicio.getProximo();
         int r = 0;
         while (n != no && n!=this.fim){
