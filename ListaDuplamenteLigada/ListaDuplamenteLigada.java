@@ -18,10 +18,9 @@ public class ListaDuplamenteLigada {
         } else {
             inicio.setAnterior(novoNo);
             novoNo.setProximo(inicio);
-
-            inicio = novoNo;
-            tamanho++;
         }
+        inicio = novoNo;
+        tamanho++;
         return novoNo;
     }
 
