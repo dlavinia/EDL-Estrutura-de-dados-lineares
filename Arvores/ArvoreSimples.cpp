@@ -130,10 +130,13 @@ class arvore_simples{
         bool isRoot(node* n){
             return (n == this-> root_);
         }
-        
+         int replace(node * n, int o){
+            n->set_element(o);
+        }
+
         const vector<node*> &children(node * n){
             return n->children();
-                }
+        }
 };
 
 int main() {
