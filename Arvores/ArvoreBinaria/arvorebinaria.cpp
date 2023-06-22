@@ -4,15 +4,16 @@
 
 using namespace std;
 
+template <typename T>
 class node{
     private:
-        int  ch;
+        T  ch;
         node * pai;
         node * filhoDireito_;
         node * filhoEsquerdo_;
 
     public:
-        node(node * pai, int o){
+        node(node * pai, T o){
             this-> ch = o;
             this-> pai = pai;
             this->filhoDireito_ = NULL;
@@ -28,7 +29,7 @@ class node{
             return this->pai;
         }
 
-        int get_chave(){
+        T get_chave(){
             return this->ch;
         }
 
@@ -56,44 +57,39 @@ class node{
             cout << "Filho Esquerdo: " << fE << endl;
             cout << "Filho Direito: " << fD << endl;
             cout << endl;
-            
-            
+           
+           
         }
 };
 
+template <typename T>
 class arvore_b{
     private:
-        node*root_;
+        node<T> *root_;
         unsigned int size_;
-    
-    int altura_(node * no){
-		if (no -> is_external()){
-			return 0;
-		}else{
-			int altura =0;
-			int altura_f;
-			if(no->get_filho_esquerdo() != NULL){
-				altura_f=altura_(no->get_filho_esquerdo());
-				altura= max(altura_f,altura);
-			
-			}
-			if(no->get_filho_direito() != NULL){
-				altura_f=altura_(no->get_filho_direito());
-				altura= max(altura_f,altura);
-				
-			}
-			return altura+1;
-		}
-	}
-    public:
-    arvore_b(int ch){
-        root_ = new node(NULL, ch);
+   
+    int altura_(node<T> * no){
+    if (no -> is_external()) return 0;
+    else{
+    int altura = 0;
+    if(no->get_filho_esquerdo() != NULL)
+        altura = max(altura, altura_(no->get_filho_esquerdo()));
+
+    if(no->get_filho_direito() != NULL)
+        altura = max(altura, altura_(no->get_filho_direito()));
+
+    return altura+1;
     }
-      node * root(){
+}
+    public:
+    arvore_b(T ch){
+        root_ = new node<T> (NULL, ch);
+    }
+      node<T> * root(){
         return this->root_;
     }
 
-    node* pesquisar(int k, node* v){
+    node<T> *pesquisar(T k, node<T> * v){
         if(v->is_external()){
             return v;
         }
@@ -108,59 +104,55 @@ class arvore_b{
         }
     }
    
-    node * incluir(int k){
-	    node * pai = pesquisar(k, root());
-	    node * novo = new node(pai, k);
-	   
-	    if(k < pai->get_chave() ){
-	   		pai->set_filho_esquerdo(novo);
-	}
-		else{
-			pai->set_filho_direito(novo);
-		}
-	return novo;
-	}
+    node<T> * incluir(T k){
+        node<T> * pai = pesquisar(k, root());
+        node<T> * novo = new node<T>(pai, k);
+        
+    if(k < pai->get_chave() ) pai->set_filho_esquerdo(novo);
+    
+    else pai->set_filho_direito(novo);
+    
+    return novo;
+    }
 
-   	int altura(){
-		return this->altura_(root_);
-	}
-	
+    int altura(){
+        return this->altura_(root_);
+}
+
  
 };
 
-
-
-int main() {
-   
-    arvore_b a1(10);  
-    node*raiz = a1.root();
+template <typename T>
+void test(){
+    arvore_b<T> a1(10);  
+    node<T> * raiz = a1.root();
     int chave = a1.root()-> get_chave();
    
-    node * testep = a1.pesquisar(14, a1.root());
-    int result = testep->get_chave();
+    node<T> * testep = a1.pesquisar(14, a1.root());
+    T result = testep->get_chave();
 
-    int resut = testep->get_chave();
-    
-    
+    T resut = testep->get_chave();
+   
+   
  
-    node * f1 = a1.incluir(7);
-    
-    node * f2 = a1.incluir(12);
+    node<T> * f1 = a1.incluir(7);
+   
+    node<T> * f2 = a1.incluir(12);
     raiz->print_filhos();
-    
-    node * f3 = a1.incluir(2);
-    
-    node * f4 = a1.incluir(8);
-    
-    int filhoEs =  raiz->get_filho_esquerdo()->get_chave();
-    int filhoDir =  raiz->get_filho_direito()->get_chave();
-    
-    int paif3 = f3->get_pai()->get_chave();
-    
+   
+    node<T> * f3 = a1.incluir(2);
+   
+    node<T> * f4 = a1.incluir(8);
+   
+    T filhoEs =  raiz->get_filho_esquerdo()->get_chave();
+    T filhoDir =  raiz->get_filho_direito()->get_chave();
+   
+    T paif3 = f3->get_pai()->get_chave();
+   
     raiz->print_filhos();
     f1->print_filhos();
-    
-    
+   
+   
    // cout << "ponteiro raiz: " << raiz << endl;
     //cout << "Chave raiz: " << chave << endl;
     //cout << "teste pesquisa: " << resut << endl;
@@ -170,8 +162,12 @@ int main() {
    // cout << "pai de F3: " << paif3 << endl;
    
    cout << "Altura: " << a1.altura();
-    
-    
+   
+}
 
-    return 0;
+
+int main() {
+   
+   	test<int>();
+	return 0;
 }
