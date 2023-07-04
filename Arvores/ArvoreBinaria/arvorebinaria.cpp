@@ -111,6 +111,32 @@ private:
         
         return nos;    
     }
+        vector<node<T>*> nos_pre_ordem_rec(vector<node<T>*> & nos, node<T>* v ){
+            nos.push_back(v);
+                 
+            if (v->is_internal())
+                if( v->get_filho_esquerdo() != NULL)
+                    this->nos_pre_ordem_rec(nos, v->get_filho_esquerdo());
+            
+            if (v->is_internal())
+                if(v->get_filho_direito() != NULL )
+                    this->nos_pre_ordem_rec(nos, v->get_filho_direito());
+            
+            return nos;    
+    }
+           vector<node<T>*> nos_pos_ordem_rec(vector<node<T>*> & nos, node<T>* v ){
+            if (v->is_internal())
+                if( v->get_filho_esquerdo() != NULL)
+                    this->nos_pos_ordem_rec(nos, v->get_filho_esquerdo());
+            
+            if (v->is_internal())
+                if(v->get_filho_direito() != NULL )
+                    this->nos_pos_ordem_rec(nos, v->get_filho_direito());
+            nos.push_back(v);
+            return nos;    
+    }
+    
+    
 public:
     arvore_b(T ch)
     {
@@ -172,9 +198,20 @@ public:
 
         return this->nos_emordem_rec(nos, root());
     }
+    
+    vector<node<T>*> nos_pre_ordem(){
+        vector<node<T>*> nos;
 
-    void print_emordem(){
-        for (node<T> *i: this->nos_emordem())
+        return this->nos_pre_ordem_rec(nos, root());
+    }
+     vector<node<T>*> nos_pos_ordem(){
+        vector<node<T>*> nos;
+
+        return this->nos_pos_ordem_rec(nos, root());
+    }
+
+    void print(vector<node<T>*> nos){
+        for (node<T> *i:nos)
             cout << i->get_chave() << ' ';
     }
 
@@ -189,7 +226,7 @@ public:
         return index;
     }
 
-    vector<vector<string>> preencheMatriz(){
+    vector<vector<string> > preencheMatriz(){
         int linhas = this->altura()+1;
         vector<string> elementos;
 
@@ -225,15 +262,21 @@ void test()
     arvore_b<T> a1(10);
     node<T> *raiz = a1.root();
 
-    node<T> * f1 = a1.incluir(5);
-    node<T>* f2 = a1.incluir(15);
-    node<T> * f3 = a1.incluir(8);
+    a1.incluir(5);
+    a1.incluir(8);
+    a1.incluir(15);
     a1.incluir(13);
-
     a1.incluir(22);
+    a1.incluir(4);
 
-    
-    a1.print_emordem();
+    cout<<"Ordem: ";
+    a1.print(a1.nos_emordem());
+    cout<< endl;
+    cout<<"Pre-ordem: ";
+    a1.print(a1.nos_pre_ordem());
+    cout<< endl;
+    cout<<"Pos-ordem: ";
+    a1.print(a1.nos_pos_ordem());
     cout<< endl;
     cout<<"altura: "<<a1.altura() << endl;
     
