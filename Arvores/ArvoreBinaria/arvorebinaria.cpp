@@ -1,173 +1,249 @@
 #include <iostream>
 #include <vector>
-#include<algorithm>
+#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
 
 template <typename T>
-class node{
-    private:
-        T  ch;
-        node * pai;
-        node * filhoDireito_;
-        node * filhoEsquerdo_;
+class node
+{
+private:
+    T ch;
+    node *pai;
+    node *filhoDireito_;
+    node *filhoEsquerdo_;
 
-    public:
-        node(node * pai, T o){
-            this-> ch = o;
-            this-> pai = pai;
-            this->filhoDireito_ = NULL;
-            this->filhoEsquerdo_ = NULL;
-        }
-        node * get_filho_esquerdo(){
-            return this->filhoEsquerdo_;
-        }
-        node * get_filho_direito(){
-            return this->filhoDireito_;
-        }
-        node * get_pai(){
-            return this->pai;
-        }
+public:
+    node(node *pai, T o)
+    {
+        this->ch = o;
+        this->pai = pai;
+        this->filhoDireito_ = NULL;
+        this->filhoEsquerdo_ = NULL;
+    }
+    node *get_filho_esquerdo()
+    {
+        return this->filhoEsquerdo_;
+    }
+    node *get_filho_direito()
+    {
+        return this->filhoDireito_;
+    }
+    node *get_pai()
+    {
+        return this->pai;
+    }
 
-        T get_chave(){
-            return this->ch;
-        }
+    T get_chave()
+    {
+        return this->ch;
+    }
 
-        bool is_internal(){
-            return this->get_filho_esquerdo() != NULL || this->get_filho_direito()!=NULL;
-        }
-        bool is_external(){
-            return this->get_filho_esquerdo() == NULL && this->get_filho_direito()==NULL;
-        }
-       
-        void set_pai(node* p){
-            this->pai = p;
-        }
-        void set_filho_esquerdo(node* fe){
-            this->filhoEsquerdo_ = fe;
-        }
-        void set_filho_direito(node* fd){
-            this->filhoDireito_ = fd;
-        }
-        //teste
-        void print_filhos(){
-            int fD = this->get_filho_direito()->get_chave();
-            int fE = this->get_filho_esquerdo()->get_chave();
-            cout << "Filhos de " << this->get_chave() << endl;
-            cout << "Filho Esquerdo: " << fE << endl;
-            cout << "Filho Direito: " << fD << endl;
-            cout << endl;
-           
-           
-        }
+    bool is_internal()
+    {
+        return this->get_filho_esquerdo() != NULL || this->get_filho_direito() != NULL;
+    }
+    bool is_external()
+    {
+        return this->get_filho_esquerdo() == NULL && this->get_filho_direito() == NULL;
+    }
+
+    void set_pai(node *p)
+    {
+        this->pai = p;
+    }
+    void set_filho_esquerdo(node *fe)
+    {
+        this->filhoEsquerdo_ = fe;
+    }
+    void set_filho_direito(node *fd)
+    {
+        this->filhoDireito_ = fd;
+    }
+
 };
 
 template <typename T>
-class arvore_b{
-    private:
-        node<T> *root_;
-        unsigned int size_;
-   
-    int altura_(node<T> * no){
-    if (no -> is_external()) return 0;
-    else{
-    int altura = 0;
-    if(no->get_filho_esquerdo() != NULL)
-        altura = max(altura, altura_(no->get_filho_esquerdo()));
+class arvore_b
+{
+private:
+    node<T> *root_;
+    unsigned int size_;
 
-    if(no->get_filho_direito() != NULL)
-        altura = max(altura, altura_(no->get_filho_direito()));
+    int altura_(node<T> *no)
+    {
+        if (no->is_external())
+            return 0;
+        else
+        {
+            int altura = 0;
+            if (no->get_filho_esquerdo() != NULL)
+                altura = max(altura, altura_(no->get_filho_esquerdo()));
 
-    return altura+1;
+            if (no->get_filho_direito() != NULL)
+                altura = max(altura, altura_(no->get_filho_direito()));
+
+            return altura + 1;
+        }
     }
-}
-    public:
-    arvore_b(T ch){
-        root_ = new node<T> (NULL, ch);
+
+    int profundidade_rec(node<T> *no) {
+        if (no == this->root()) {
+            return 0;
+        } 
+        else {
+            return 1 + this->profundidade_rec(no->get_pai());
+        }
     }
-      node<T> * root(){
+
+    vector<node<T>*> nos_emordem_rec(vector<node<T>*> & nos, node<T>* v ){
+        if (v->is_internal())
+            if( v->get_filho_esquerdo() != NULL)
+                this->nos_emordem_rec(nos, v->get_filho_esquerdo());
+        
+        nos.push_back(v);
+
+        
+        if (v->is_internal())
+            if(v->get_filho_direito() != NULL )
+                this->nos_emordem_rec(nos, v->get_filho_direito());
+        
+        return nos;    
+    }
+public:
+    arvore_b(T ch)
+    {
+        root_ = new node<T>(NULL, ch);
+    }
+    node<T> *root()
+    {
         return this->root_;
     }
 
-    node<T> *pesquisar(T k, node<T> * v){
-        if(v->is_external()){
+    node<T> *pesquisar(T k, node<T> *v)
+    {
+        if (v->is_external() || k == v->get_chave())
+        {
             return v;
         }
-        if (k < v->get_chave()){
-            return this->pesquisar(k, v->get_filho_esquerdo());
+        if (k < v->get_chave())
+        {
+            if (v->get_filho_esquerdo() != NULL)
+                return this->pesquisar(k, v->get_filho_esquerdo());
+
+            else
+                return v;
         }
-        else if(k = v->get_chave()){
-            return v;
-        }
-        else{
-            return this->pesquisar(k, v->get_filho_direito());
+        else
+        {
+            if (v->get_filho_direito() != NULL)
+                return this->pesquisar(k, v->get_filho_direito());
+            else
+                return v;
         }
     }
-   
-    node<T> * incluir(T k){
-        node<T> * pai = pesquisar(k, root());
-        node<T> * novo = new node<T>(pai, k);
-        
-    if(k < pai->get_chave() ) pai->set_filho_esquerdo(novo);
-    
-    else pai->set_filho_direito(novo);
-    
-    return novo;
+
+    node<T> *incluir(T k)
+    {
+        node<T> *pai = pesquisar(k, root());
+        node<T> *novo = new node<T>(pai, k);
+
+        if (k < pai->get_chave())
+            pai->set_filho_esquerdo(novo);
+
+        else
+            pai->set_filho_direito(novo);
+
+        return novo;
     }
 
     int altura(){
         return this->altura_(root_);
+    }
+
+    int profundidade(node<T> *no){
+        int p = this->profundidade_rec(no);
+       return p;
+    }
+
+    vector<node<T>*> nos_emordem(){
+        vector<node<T>*> nos;
+
+        return this->nos_emordem_rec(nos, root());
+    }
+
+    void print_emordem(){
+        for (node<T> *i: this->nos_emordem())
+            cout << i->get_chave() << ' ';
+    }
+
+
+    int index_emordem(node<T>* no){
+        vector<node<T>*> v = this->nos_emordem();
+        int index = -1;
+        auto it = find(v.begin(), v.end(), no);
+        if (it != v.end())
+            index = it - v.begin();
+        
+        return index;
+    }
+
+    vector<vector<string>> preencheMatriz(){
+        int linhas = this->altura()+1;
+        vector<string> elementos;
+
+        for (node<T> *i: this->nos_emordem())
+            elementos.push_back(to_string(i->get_chave()));
+
+        vector<vector<string>> grid(linhas, vector <string>(elementos.size(), " "));
+
+        for (node<T>* no: this->nos_emordem()) 
+            grid[this->profundidade(no)][this->index_emordem(no)] = elementos[index_emordem(no)];
+            
+        return grid;
+    }
+
+
+    void print_vector(){
+        vector<vector<string>> v = this->preencheMatriz();
+        for(int i = 0; i<v.size(); i++){
+            for(int j = 0; j <v[i].size(); j++){
+                cout << v[i][j] << " ";
+            }
+            cout << " " << endl;
+        }
+        cout << " "<<endl;
 }
 
- 
 };
 
+
 template <typename T>
-void test(){
-    arvore_b<T> a1(10);  
-    node<T> * raiz = a1.root();
-    int chave = a1.root()-> get_chave();
-   
-    node<T> * testep = a1.pesquisar(14, a1.root());
-    T result = testep->get_chave();
+void test()
+{
+    arvore_b<T> a1(10);
+    node<T> *raiz = a1.root();
 
-    T resut = testep->get_chave();
-   
-   
- 
-    node<T> * f1 = a1.incluir(7);
-   
-    node<T> * f2 = a1.incluir(12);
-    raiz->print_filhos();
-   
-    node<T> * f3 = a1.incluir(2);
-   
-    node<T> * f4 = a1.incluir(8);
-   
-    T filhoEs =  raiz->get_filho_esquerdo()->get_chave();
-    T filhoDir =  raiz->get_filho_direito()->get_chave();
-   
-    T paif3 = f3->get_pai()->get_chave();
-   
-    raiz->print_filhos();
-    f1->print_filhos();
-   
-   
-   // cout << "ponteiro raiz: " << raiz << endl;
-    //cout << "Chave raiz: " << chave << endl;
-    //cout << "teste pesquisa: " << resut << endl;
-    cout << "filho esquerdo de 7: " << f1->get_filho_esquerdo()->get_chave() << endl;
-    //cout << "filho direito: " << filhoDir << endl;
-    //cout << "ponteiro F3: " << f3 << endl;
-   // cout << "pai de F3: " << paif3 << endl;
-   
-   cout << "Altura: " << a1.altura();
-   
-}
+    node<T> * f1 = a1.incluir(5);
+    node<T>* f2 = a1.incluir(15);
+    node<T> * f3 = a1.incluir(8);
+    a1.incluir(13);
+
+    a1.incluir(22);
+
+    
+    a1.print_emordem();
+    cout<< endl;
+    cout<<"altura: "<<a1.altura() << endl;
+    
+    a1.print_vector();
 
 
-int main() {
-   
-   	test<int>();
-	return 0;
+};
+
+int main()
+{
+    test<int>();
+    return 0;
 }
