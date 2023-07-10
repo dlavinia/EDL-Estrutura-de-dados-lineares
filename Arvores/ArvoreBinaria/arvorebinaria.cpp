@@ -61,6 +61,10 @@ public:
     {
         this->filhoDireito_ = fd;
     }
+    void set_chave(T ch)
+    {
+        this->ch = ch;
+    }
 
 };
 
@@ -111,7 +115,7 @@ private:
         
         return nos;    
     }
-        vector<node<T>*> nos_pre_ordem_rec(vector<node<T>*> & nos, node<T>* v ){
+    vector<node<T>*> nos_pre_ordem_rec(vector<node<T>*> & nos, node<T>* v ){
             nos.push_back(v);
                  
             if (v->is_internal())
@@ -124,7 +128,7 @@ private:
             
             return nos;    
     }
-           vector<node<T>*> nos_pos_ordem_rec(vector<node<T>*> & nos, node<T>* v ){
+    vector<node<T>*> nos_pos_ordem_rec(vector<node<T>*> & nos, node<T>* v ){
             if (v->is_internal())
                 if( v->get_filho_esquerdo() != NULL)
                     this->nos_pos_ordem_rec(nos, v->get_filho_esquerdo());
@@ -193,28 +197,86 @@ public:
        return p;
     }
 
+    void swapElements(node<T> * n, node<T> * w){
+            T aux = n->get_chave();
+            n->set_chave(w->get_chave());
+            w->set_chave(aux);
+        }
+
+    void remove(T ch){
+        node<T> * no = this->pesquisar(ch, this->root());
+        node<T> * pai = no->get_pai();
+
+        if (no->is_external()){
+            if (no == pai->get_filho_direito() ) pai->set_filho_direito(NULL);
+            if (no == pai->get_filho_esquerdo() ) pai->set_filho_esquerdo(NULL);
+        }
+        else{
+            if (no->get_filho_direito() != NULL && no->get_filho_esquerdo() == NULL){
+                this->swapElements(no, no->get_filho_direito());
+                no->set_filho_direito(NULL);
+                return;
+            }
+            if (no->get_filho_esquerdo() != NULL && no->get_filho_direito() == NULL){
+            this->swapElements(no, no->get_filho_esquerdo());
+            no->set_filho_esquerdo(NULL);
+            return;
+            }
+
+            if (no->get_filho_esquerdo() != NULL && no->get_filho_direito() != NULL){
+                node<T> * s = sucessor(no);
+                this->swapElements(no, s);
+                
+                if(s == s->get_pai()->get_filho_esquerdo()) s->get_pai()->set_filho_esquerdo(NULL);
+                if(s == s->get_pai()->get_filho_direito()) s->get_pai()->set_filho_direito(NULL);
+
+                
+                return;
+                
+
+        }
+            
+    }
+    }
+    node<T> * sucessor(node<T> * no) {
+    if (no == NULL) {
+      return NULL;
+    }
+    if (no->get_filho_direito() != NULL) {
+      node<T> * novo_no = no->get_filho_direito();
+      while (novo_no->get_filho_esquerdo() != NULL) {
+        novo_no = novo_no->get_filho_esquerdo();
+      }
+      return novo_no;
+    } else {
+       node<T> * pai = no->get_pai();
+      while (pai != NULL && no == pai->get_filho_direito()) {
+        no = pai;
+        pai = pai->get_pai();
+      }
+      return pai;
+    }
+  }
     vector<node<T>*> nos_emordem(){
         vector<node<T>*> nos;
 
         return this->nos_emordem_rec(nos, root());
     }
-    
     vector<node<T>*> nos_pre_ordem(){
         vector<node<T>*> nos;
 
         return this->nos_pre_ordem_rec(nos, root());
     }
-     vector<node<T>*> nos_pos_ordem(){
+    vector<node<T>*> nos_pos_ordem(){
         vector<node<T>*> nos;
 
         return this->nos_pos_ordem_rec(nos, root());
-    }
+     }
 
     void print(vector<node<T>*> nos){
         for (node<T> *i:nos)
             cout << i->get_chave() << ' ';
     }
-
 
     int index_emordem(node<T>* no){
         vector<node<T>*> v = this->nos_emordem();
@@ -241,7 +303,6 @@ public:
         return grid;
     }
 
-
     void print_vector(){
         vector<vector<string>> v = this->preencheMatriz();
         for(int i = 0; i<v.size(); i++){
@@ -252,6 +313,7 @@ public:
         }
         cout << " "<<endl;
 }
+
 
 };
 
@@ -268,6 +330,9 @@ void test()
     a1.incluir(13);
     a1.incluir(22);
     a1.incluir(4);
+    a1.incluir(6);
+    a1.incluir(9);
+    a1.incluir(30);
 
     cout<<"Ordem: ";
     a1.print(a1.nos_emordem());
@@ -282,7 +347,10 @@ void test()
     
     a1.print_vector();
 
+    a1.remove(8);
+    
 
+    a1.print_vector();
 };
 
 int main()
